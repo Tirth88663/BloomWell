@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "259991962536",
+    "project_id": "bloomwell-c4d36",
+    "storage_bucket": "bloomwell-c4d36.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:259991962536:android:9a459f0a5ac857b411d39d",
+        "android_client_info": {
+          "package_name": "com.example.bloomwell"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyCU9YYBsI60BXy3AtL1IT9VizIxTJDdolk"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
