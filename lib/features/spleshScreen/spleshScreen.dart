@@ -40,8 +40,10 @@ class _SplashScreenState extends State<SplashScreen> {
       listenWhen: (previous, current) => current is SplashActionState,
       buildWhen: (previous, current) => current is! SplashActionState,
       listener: (context, state) {
-        if (state is SplashNavToLoginScreen) {
-          Navigator.of(context).pushReplacementNamed("/login");
+        if (state is SplashNavToLoginScreenState) {
+          Navigator.pushReplacementNamed(context, "/login");
+        } else if (state is SplashNavToMainScreenState) {
+          Navigator.pushReplacementNamed(context, "/main");
         }
       },
       builder: (context, state) {

@@ -9,4 +9,6 @@ class SplashInitial extends SplashState {}
 
 class SplashWaitingActionState extends SplashState {}
 
-class SplashNavToLoginScreen extends SplashActionState {}
+class SplashNavToLoginScreenState extends SplashActionState {}
+
+class SplashNavToMainScreenState extends SplashActionState {}

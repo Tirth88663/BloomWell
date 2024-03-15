@@ -1,4 +1,6 @@
 import 'package:bloomwell/features/login/loginScreen.dart';
+import 'package:bloomwell/features/mainScreen/mainScreen.dart';
+import 'package:bloomwell/features/signup/signupScreen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 
@@ -29,8 +31,9 @@ class MyApp extends StatelessWidget {
       theme: ThemeData(
         colorScheme: ColorScheme.fromSeed(
           seedColor: const Color(0xff60316E),
+          primary: const Color(0xff231c5f),
           brightness: Brightness.dark,
-          secondary: const Color(0xffBE82D0),
+          secondary: const Color(0xff343c80),
         ),
         appBarTheme: const AppBarTheme(
           elevation: 0,
@@ -43,6 +46,8 @@ class MyApp extends StatelessWidget {
       routes: {
         '/': (context) => const SplashScreen(),
         '/login': (context) => const LoginScreen(),
+        '/signup': (context) => const SignupScreen(),
+        '/main': (context) => const MainScreen(),
       },
     );
   }

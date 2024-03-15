@@ -16,12 +16,13 @@ class SplashBloc extends Bloc<SplashEvent, SplashState> {
       SplashLogInEvent event, Emitter<SplashState> emit) async {
     emit(SplashWaitingActionState());
     await Future.delayed(const Duration(seconds: 2));
+    emit(SplashNavToMainScreenState());
   }
 
   FutureOr<void> splashLogOutEvent(
       SplashLogOutEvent event, Emitter<SplashState> emit) async {
     emit(SplashWaitingActionState());
     await Future.delayed(const Duration(seconds: 2));
-    emit(SplashNavToLoginScreen());
+    emit(SplashNavToLoginScreenState());
   }
 }

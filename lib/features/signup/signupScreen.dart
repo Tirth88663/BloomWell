@@ -1,34 +1,34 @@
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:fluttertoast/fluttertoast.dart';
-import 'package:lottie/lottie.dart';
 import 'package:google_fonts/google_fonts.dart';
+import 'package:lottie/lottie.dart';
 
-import 'bloc/login_bloc.dart';
+import '../../models/user_model.dart';
+import 'bloc/signup_bloc.dart';
 
-class LoginScreen extends StatefulWidget {
-  const LoginScreen({super.key});
+class SignupScreen extends StatefulWidget {
+  const SignupScreen({super.key});
 
   @override
-  State<LoginScreen> createState() => _LoginScreenState();
+  State<SignupScreen> createState() => _SignupScreenState();
 }
 
-class _LoginScreenState extends State<LoginScreen> {
+class _SignupScreenState extends State<SignupScreen> {
   @override
   void initState() {
-    loginBloc.add(LoginInitialEvent());
+    signupBloc.add(SignupInitialEvent());
     super.initState();
   }
 
-  final LoginBloc loginBloc = LoginBloc();
+  final SignupBloc signupBloc = SignupBloc();
   final _auth = FirebaseAuth.instance;
-  final _loginformkey = GlobalKey<FormState>();
-
-  final TextEditingController emailController = TextEditingController();
-  final TextEditingController passwordController = TextEditingController();
+  final _signupformKey = GlobalKey<FormState>();
+  final emailEditingController = TextEditingController();
+  final passwordEditingController = TextEditingController();
   @override
   Widget build(BuildContext context) {
     double myHeight = MediaQuery.of(context).size.height;
@@ -36,7 +36,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final emailField = TextFormField(
       style: const TextStyle(color: Colors.black),
       autofocus: false,
-      controller: emailController,
+      controller: emailEditingController,
       keyboardType: TextInputType.emailAddress,
       validator: (value) {
         if (value!.isEmpty) {
@@ -53,8 +53,8 @@ class _LoginScreenState extends State<LoginScreen> {
         return null;
       },
       onSaved: (value) {
-        _loginformkey.currentState!.validate();
-        emailController.text = value!;
+        _signupformKey.currentState!.validate();
+        emailEditingController.text = value!;
       },
       textInputAction: TextInputAction.next,
       cursorColor: Theme.of(context).colorScheme.primary,
@@ -83,7 +83,7 @@ class _LoginScreenState extends State<LoginScreen> {
     final passwordField = TextFormField(
       style: const TextStyle(color: Colors.black),
       autofocus: false,
-      controller: passwordController,
+      controller: passwordEditingController,
       obscureText: true,
       validator: (value) {
         RegExp regex = RegExp(r'^.{8,}$');
@@ -96,8 +96,8 @@ class _LoginScreenState extends State<LoginScreen> {
         return null;
       },
       onSaved: (value) {
-        _loginformkey.currentState!.validate();
-        passwordController.text = value!;
+        _signupformKey.currentState!.validate();
+        passwordEditingController.text = value!;
       },
       textInputAction: TextInputAction.done,
       cursorColor: Theme.of(context).colorScheme.primary,
@@ -123,7 +123,7 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-    final loginButton = MaterialButton(
+    final signupButton = MaterialButton(
       shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(30)),
       elevation: 10,
       padding: const EdgeInsets.fromLTRB(20, 15, 20, 15),
@@ -132,10 +132,10 @@ class _LoginScreenState extends State<LoginScreen> {
       color: Theme.of(context).colorScheme.primary,
       splashColor: Theme.of(context).colorScheme.secondary,
       onPressed: () {
-        logIn(emailController.text, passwordController.text);
+        signUp(emailEditingController.text, passwordEditingController.text);
       },
       child: Text(
-        "Login",
+        "SignUp",
         textAlign: TextAlign.center,
         style: GoogleFonts.poppins(
           textStyle: const TextStyle(
@@ -146,89 +146,62 @@ class _LoginScreenState extends State<LoginScreen> {
         ),
       ),
     );
-    return BlocConsumer<LoginBloc, LoginState>(
-      bloc: loginBloc,
-      listenWhen: (previous, current) => current is LoginActionState,
-      buildWhen: (previous, current) => current is! LoginActionState,
+
+    return BlocConsumer<SignupBloc, SignupState>(
+      bloc: signupBloc,
       listener: (context, state) {
-        if (state is LoginNavToSignupState) {
-          Navigator.pushNamed(context, "/signup");
-        } else if (state is LoginNavToMainState) {
+        if (state is SignupNavToMainState) {
           Navigator.pushReplacementNamed(context, "/main");
         }
       },
       builder: (context, state) {
         switch (state.runtimeType) {
-          case LoginInitial:
+          case SignupInitial:
             return Scaffold(
-              body: SingleChildScrollView(
-                physics: const BouncingScrollPhysics(),
-                child: Stack(
-                  alignment: AlignmentDirectional.topCenter,
-                  children: [
-                    Lottie.asset(
-                      "assets/night-mountains.json",
-                      fit: BoxFit.cover,
-                      backgroundLoading: true,
-                      reverse: true,
-                      height: myHeight,
-                      width: myWidth,
-                    ),
-                    Column(
-                      mainAxisAlignment: MainAxisAlignment.center,
-                      children: [
-                        Padding(
-                          padding: EdgeInsets.only(
-                            left: myWidth * 0.5,
-                            bottom: myHeight * 0.2,
-                            top: myHeight * 0.06,
-                          ),
-                          child: Row(
-                            mainAxisAlignment: MainAxisAlignment.end,
-                            children: [
-                              GestureDetector(
-                                onTap: () {
-                                  loginBloc.add(GetStartedClickedEvent());
-                                },
-                                child: Lottie.asset(
-                                  "assets/get-started.json",
-                                  fit: BoxFit.contain,
-                                  height: myHeight * 0.05,
-                                ),
-                              )
-                            ],
-                          ),
-                        ),
-                        ClipRRect(
-                          borderRadius: BorderRadius.circular(20),
-                          child: Container(
-                            color: Colors.white.withOpacity(0.3),
-                            height: myHeight * 0.4,
-                            width: myWidth * 0.85,
-                            child: Padding(
-                              padding: EdgeInsets.all(myWidth * 0.05),
-                              child: Form(
-                                key: _loginformkey,
-                                child: Column(
-                                  mainAxisAlignment: MainAxisAlignment.center,
-                                  children: [
-                                    emailField,
-                                    SizedBox(height: myHeight * 0.02),
-                                    passwordField,
-                                    SizedBox(height: myHeight * 0.03),
-                                    loginButton,
-                                  ],
-                                ),
+                extendBodyBehindAppBar: true,
+                appBar: AppBar(
+                  foregroundColor: Theme.of(context).colorScheme.primary,
+                ),
+                body: SingleChildScrollView(
+                  physics: const BouncingScrollPhysics(),
+                  child: Stack(
+                    alignment: AlignmentDirectional.center,
+                    children: [
+                      Lottie.asset(
+                        "assets/boat-bg.json",
+                        fit: BoxFit.cover,
+                        backgroundLoading: true,
+                        reverse: true,
+                        height: myHeight,
+                        width: myWidth,
+                      ),
+                      ClipRRect(
+                        borderRadius: BorderRadius.circular(20),
+                        child: Container(
+                          color: Colors.white.withOpacity(0.4),
+                          height: myHeight * 0.4,
+                          width: myWidth * 0.85,
+                          child: Padding(
+                            padding: EdgeInsets.all(myWidth * 0.05),
+                            child: Form(
+                              key: _signupformKey,
+                              child: Column(
+                                mainAxisAlignment: MainAxisAlignment.center,
+                                children: [
+                                  emailField,
+                                  SizedBox(height: myHeight * 0.02),
+                                  passwordField,
+                                  SizedBox(height: myHeight * 0.03),
+                                  signupButton,
+                                ],
                               ),
                             ),
                           ),
                         ),
-                      ],
-                    ),
-                  ],
-                ),
-              ),
-            );
+                      ),
+                    ],
+                  ),
+                ));
           default:
             return const SizedBox();
         }
@@ -236,18 +209,33 @@ class _LoginScreenState extends State<LoginScreen> {
     );
   }
 
-  void logIn(String email, String password) async {
-    if (_loginformkey.currentState!.validate()) {
-      print("object");
+  void signUp(String email, String password) async {
+    _signupformKey.currentState!.validate();
+    if (_signupformKey.currentState!.validate()) {
       await _auth
-          .signInWithEmailAndPassword(email: email, password: password)
-          .then((uid) => {
-                Fluttertoast.showToast(msg: "Login Successful"),
-                loginBloc.add(LoginButtonClickedEvent()),
-              })
+          .createUserWithEmailAndPassword(email: email, password: password)
+          .then((value) => {postDetailsToFirestore()})
           .catchError((e) {
         Fluttertoast.showToast(msg: e!.message);
       });
     }
+  }
+
+  postDetailsToFirestore() async {
+    FirebaseFirestore firebaseFirestore = FirebaseFirestore.instance;
+    User? user = _auth.currentUser;
+
+    UserModel userModel = UserModel();
+
+    userModel.email = user!.email;
+    userModel.uid = user.uid;
+
+    await firebaseFirestore
+        .collection("users")
+        .doc(user.uid)
+        .set(userModel.toMap());
+    Fluttertoast.showToast(msg: "Account created successfully :)");
+
+    signupBloc.add(SignupButtonClickedEvent());
   }
 }
